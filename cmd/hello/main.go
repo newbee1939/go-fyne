@@ -1,24 +1,30 @@
 package main
 
 import (
-	// アプリケーションとウインドウを作成するのに使う
+	"strconv"
+
 	"fyne.io/fyne/app"
-	// ウインドウ内に配置する部品を作成するために使う
 	"fyne.io/fyne/widget"
 )
 
 func main() {
+	c := 0
 	// 新しいアプリケーションを作成
 	a := app.New()
 
 	// 新しいウインドウを作成
-	w := a.NewWindow("Hello")
-	// ウインドウに表示するコンテンツを設定
+	w := a.NewWindow("Helloです")
+	// 表示するLabelを変数に入れておく
+	l := widget.NewLabel("Hello Fyneです!")
 	w.SetContent(
-		// これで複数のコンテンツを表示できる
-		widget.NewHBox(
-			widget.NewLabel("Hello Fyne!"),
-			widget.NewLabel("This is sample application!"),
+		// 複数部品を並べる
+		widget.NewVBox(
+			l,
+			widget.NewButton("Click me!!", func() {
+				c++
+				// Labelに表示されたテキストを変更する
+				l.SetText("count: " + strconv.Itoa(c))
+			}),
 		),
 	)
 
