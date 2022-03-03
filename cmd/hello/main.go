@@ -3,31 +3,67 @@ package main
 import (
 	"strconv"
 
-	"fyne.io/fyne/app"
+	"fyne.io/fyne"
+	"fyne.io/fyne/layout"
 	"fyne.io/fyne/widget"
 )
 
-func main() {
-	c := 0
-	// 新しいアプリケーションを作成
-	a := app.New()
+// 書いてある記述は全て完璧に理解する
+// cdata is data structure.
+type cdata struct {
+	// 最後の演算結果を保管する
+	mem int
+	// 最後に押した演算キーを保管する
+	cal string
+	// 演算直後かどうかを示すフラグ
+	flg bool
+}
 
-	// 新しいウインドウを作成
-	w := a.NewWindow("Helloです")
-	// 表示するLabelを変数に入れておく
-	l := widget.NewLabel("Hello Fyneです!")
-	w.SetContent(
-		// 複数部品を並べる
-		widget.NewVBox(
-			l,
-			widget.NewButton("Click me!!", func() {
-				c++
-				// Labelに表示されたテキストを変更する
-				l.SetText("count: " + strconv.Itoa(c))
-			}),
-		),
+// createNumButtons create number buttons.
+// 引数に関数を使う関数 -> 高階関数
+// 高階関数の場合、型は func (引数) 戻り値 のように指定する
+func createNumButtons(f func(v int)) *fyne.Container {
+	// 第一引数に用意したレイアウトを使ってウィジェットを配置するコンテナを作成する
+	// fyneパッケージのContainer構造体が作成される（正確にはそのポインタ）
+	c := fyne.NewContainerWithLayout(
+		layout.NewGridLayout(3),
+		// 数字のボタンを用意
+		// 第二引数にボタンを押した際の処理を指定（外部の関数を組み込む）
+		widget.NewButton(strconv.Itoa(7), func() { f(7) }),
+		widget.NewButton(strconv.Itoa(8), func() { f(8) }),
+		widget.NewButton(strconv.Itoa(9), func() { f(9) }),
+		widget.NewButton(strconv.Itoa(4), func() { f(4) }),
+		widget.NewButton(strconv.Itoa(5), func() { f(5) }),
+		widget.NewButton(strconv.Itoa(6), func() { f(6) }),
+		widget.NewButton(strconv.Itoa(1), func() { f(1) }),
+		widget.NewButton(strconv.Itoa(2), func() { f(2) }),
+		widget.NewButton(strconv.Itoa(3), func() { f(3) }),
+		widget.NewButton(strconv.Itoa(0), func() { f(0) }),
 	)
+	return c
+}
 
-	// ウインドウを表示し実行する
-	w.ShowAndRun()
+// creteCalcButtons create operation-symbol button.
+// 演算キーを設定する
+func createCalcButtons(f func(c string)) *fyne.Container {
+	c := fyne.NewContainerWithLayout(
+		layout.NewGridLayout(1),
+		// ボタンを生成
+		widget.NewButton("CL", func() {
+			f("CL")
+		}),
+		widget.NewButton("/", func() {
+			f("/")
+		}),
+		widget.NewButton("*", func() {
+			f("*")
+		}),
+		widget.NewButton("+", func() {
+			f("+")
+		}),
+		widget.NewButton("-", func() {
+			f("-")
+		}),
+	)
+	return c
 }
