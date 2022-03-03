@@ -4,6 +4,7 @@ import (
 	"strconv"
 
 	"fyne.io/fyne"
+	"fyne.io/fyne/app"
 	"fyne.io/fyne/layout"
 	"fyne.io/fyne/widget"
 )
@@ -66,4 +67,24 @@ func createCalcButtons(f func(c string)) *fyne.Container {
 		}),
 	)
 	return c
+}
+
+// main function
+func main() {
+
+	a := app.New()
+	w := a.NewWindow("電卓")
+	// 固定サイズウインドウにする
+	w.SetFixedSize(true)
+	// 入力した数字を表示する
+	l := widget.NewLabel("0")
+	// 文字揃えを表す変数（テキストの終わり位置に揃える（通常は右揃え））
+	l.Alignment = fyne.TextAlignTrailing
+
+	// 構造体を生成して変数に格納
+	data := cdata{
+		mem: 0,
+		cal: "",
+		flg: false,
+	}
 }
