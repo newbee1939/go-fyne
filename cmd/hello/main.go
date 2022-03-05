@@ -73,7 +73,7 @@ func createCalcButtons(f func(c string)) *fyne.Container {
 func main() {
 
 	a := app.New()
-	w := a.NewWindow("電卓")
+	w := a.NewWindow("calculator")
 	// 固定サイズウインドウにする
 	w.SetFixedSize(true)
 	// 入力した数字を表示する
@@ -87,4 +87,87 @@ func main() {
 		cal: "",
 		flg: false,
 	}
+
+	// calc is calculate.
+	// nは新しく入力された文字
+	calc := func(n int) {
+		// data.calは演算記号を保存する
+		switch data.cal {
+		case "":
+			// data.memは演算結果を保存する
+			data.mem = n
+		case "+":
+			data.mem += n
+		case "-":
+			data.mem -= n
+		case "*":
+			data.mem *= n
+		case "/":
+			data.mem /= n
+		}
+		l.SetText(strconv.Itoa(data.mem))
+		data.flg = true
+	}
+
+	// pushNum is number button action
+	// 数字キーを押した際に呼び出される処理
+	pushNum := func(v int) {
+		s := l.Text
+		if data.flg {
+			s = "0"
+			data.flg = false
+		}
+		s += strconv.Itoa(v)
+		n, err := strconv.Atoi(s)
+		if err == nil {
+			l.SetText(strconv.Itoa(n))
+		}
+	}
+
+	// pushCalc is operatoin symbol button action.
+	// 演算キーを押したときの処理
+	// cは押したキーの記号
+	pushCalc := func(c string) {
+		if c == "CL" {
+			l.SetText("0")
+			data.mem = 0
+			data.flg = false
+			data.cal = ""
+			return
+		}
+		n, er := strconv.Atoi(l.Text)
+		if er != nil {
+			return
+		}
+		// 演算し、最後に押した演算キーの値を更新する
+		calc(n)
+		data.cal = c
+	}
+
+	// pushEnter is enter button action.
+	// エンターボタンを押した時の処理
+	pushEnter := func() {
+		n, er := strconv.Atoi(l.Text)
+		if er != nil {
+			return
+		}
+		calc(n)
+		data.cal = ""
+	}
+
+	// ここから理解する
+	k := createNumButtons(pushNum)
+	c := createCalcButtons(pushCalc)
+	e := widget.NewButton("Enter", pushEnter)
+
+	w.SetContent(
+		fyne.NewContainerWithLayout(
+			layout.NewBorderLayout(
+				l, e, nil, c,
+			),
+			l, e, k, c,
+		),
+	)
+	w.Resize(fyne.NewSize(300, 200))
+	w.ShowAndRun()
 }
