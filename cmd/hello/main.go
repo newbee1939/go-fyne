@@ -27,6 +27,7 @@ func createNumButtons(f func(v int)) *fyne.Container {
 	// 第一引数に用意したレイアウトを使ってウィジェットを配置するコンテナを作成する
 	// fyneパッケージのContainer構造体が作成される（正確にはそのポインタ）
 	c := fyne.NewContainerWithLayout(
+		// 3は行数を指定
 		layout.NewGridLayout(3),
 		// 数字のボタンを用意
 		// 第二引数にボタンを押した際の処理を指定（外部の関数を組み込む）
@@ -71,12 +72,15 @@ func createCalcButtons(f func(c string)) *fyne.Container {
 
 // main function
 func main() {
-
+	// 新しいアプリケーションを作成。fyne.Appという値を作成。
+	// fyne.Appはアプリケーションの機能を定義したインターフェース。ここにあるメソッドを呼び出すことでアプリケーションを操作する
+	// 実際にNewで作成されるのは、fyne.Appインターフェースを実装した構造体の値
 	a := app.New()
+	// 新しいウインドウを作成
 	w := a.NewWindow("calculator")
 	// 固定サイズウインドウにする
 	w.SetFixedSize(true)
-	// 入力した数字を表示する
+	// 入力した数字を表示する。0は初期値
 	l := widget.NewLabel("0")
 	// 文字揃えを表す変数（テキストの終わり位置に揃える（通常は右揃え））
 	l.Alignment = fyne.TextAlignTrailing
@@ -112,22 +116,29 @@ func main() {
 	// pushNum is number button action
 	// 数字キーを押した際に呼び出される処理
 	pushNum := func(v int) {
+		// 現在ラベルに設定されている値（表示されている値）を取得
 		s := l.Text
+		// 演算後だった場合はそれぞれ初期化する
 		if data.flg {
 			s = "0"
 			data.flg = false
 		}
+		// 文字列に変換した上で繋ぎ合せる
 		s += strconv.Itoa(v)
+		// 数字に変換する
 		n, err := strconv.Atoi(s)
 		if err == nil {
+			// エラーがない場合は文字列にした上でラベルにセットする
 			l.SetText(strconv.Itoa(n))
 		}
 	}
 
+	// ここから！！！！
 	// pushCalc is operatoin symbol button action.
 	// 演算キーを押したときの処理
-	// cは押したキーの記号
+	// cは押したキーの記号（+とか*とか）
 	pushCalc := func(c string) {
+		// clを押した場合は全てを初期化する
 		if c == "CL" {
 			l.SetText("0")
 			data.mem = 0
@@ -135,6 +146,7 @@ func main() {
 			data.cal = ""
 			return
 		}
+		// 表示されている値を取得
 		n, er := strconv.Atoi(l.Text)
 		if er != nil {
 			return
@@ -155,7 +167,8 @@ func main() {
 		data.cal = ""
 	}
 
-	// ここから理解する
+	// 電卓の各ボタンを生成する
+	// pushNumは各数字のボタンを押したときの動作を定義
 	k := createNumButtons(pushNum)
 	c := createCalcButtons(pushCalc)
 	e := widget.NewButton("Enter", pushEnter)
