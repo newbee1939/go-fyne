@@ -97,6 +97,7 @@ func main() {
 	calc := func(n int) {
 		// data.calは演算記号を保存する
 		switch data.cal {
+		// ""はEnterを押したとき
 		case "":
 			// data.memは演算結果を保存する
 			data.mem = n
