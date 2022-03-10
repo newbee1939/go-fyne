@@ -133,7 +133,6 @@ func main() {
 		}
 	}
 
-	// ここから！！！！
 	// pushCalc is operatoin symbol button action.
 	// 演算キーを押したときの処理
 	// cは押したキーの記号（+とか*とか）
